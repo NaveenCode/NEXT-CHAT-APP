@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import CustomInput from "../reusableComponents/CustomInput";
 import usePostData from "@/hooks/usePostData";
 import Loader from "../reusableComponents/Loader";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 type LoginFormType = {
   email: string;
   password: string;
 };
 const Login = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string>("");
   const [formData, setFormData] = useState<LoginFormType>({
@@ -28,11 +31,27 @@ const Login = () => {
     }
     return true;
   };
-  const handleLoginFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLoginFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm) return;
-    postData(formData);
+
+    if (!validateForm()) return;
+
+    const res = await postData(formData);
+
+    if (res) {
+      toast.success("Login Successful!", {
+        description: "Welcome back!",
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo clicked"),
+        },
+      });
+      router.push("/chat");
+    }
+
+    console.log("res", res);
   };
+
   const handleGetCredentails = () => {
     setFormData((prev) => ({
       ...prev,

@@ -3,13 +3,10 @@ import React, { useState } from "react";
 import CustomInput from "../reusableComponents/CustomInput";
 import usePostData from "@/hooks/usePostData";
 import { toast } from "sonner";
-type SignUpFormData = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  pic: File | null;
-};
+import ImageUpload from "./ImageUpload";
+import { useRouter } from "next/navigation";
+import Loader from "../reusableComponents/Loader";
+
 const emptyForm = {
   name: "",
   email: "",
@@ -19,14 +16,16 @@ const emptyForm = {
 };
 
 const Signup = () => {
-  const [formData, setFormData] = useState<SignUpFormData>(emptyForm);
+  const [formData, setFormData] = useState<ISignUpFormData>(emptyForm);
 
-  // console.log("formData", formData);
+  console.log("formData", formData);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<string | null>(null);
+  const [imageUploading, setImageUplading] = useState<boolean>(false);
   const { postData, data, loading, error } = usePostData("/api/signup");
+  const router = useRouter();
 
   const validationForm = (): boolean => {
     const { name, email, password, confirmPassword } = formData;
@@ -42,14 +41,10 @@ const Signup = () => {
     return true;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files, type } = e.target;
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
-    if (type === "file" && files) {
-      setFormData((prev) => ({ ...prev, [name]: files[0] }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,6 +62,7 @@ const Signup = () => {
 
     if (result) {
       toast("signup successful", {});
+      router.push("/chat");
       console.log("Server response:", result);
     }
   };
@@ -114,12 +110,11 @@ const Signup = () => {
             setShowConfirmPassword(!showConfirmPassword)
           }
         />
-        <CustomInput
-          label="Upload Your Picture"
-          type="file"
-          name="pic"
-          onChange={handleInputChange}
+
+        <ImageUpload
           fileName={formData.pic?.name}
+          setFormData={setFormData}
+          setImageUplading={setImageUplading}
         />
         {errors && (
           <div className="text-red-600 font-medium text-sm">{errors}</div>
@@ -131,7 +126,7 @@ const Signup = () => {
           className="bg-blue-600 w-full text-white py-3 rounded-xl"
           type="submit"
         >
-          {loading ? "Signing Up ..." : "Sign Up"}
+          {loading || imageUploading ? <Loader /> : "Sign Up"}
         </button>
       </form>
     </div>

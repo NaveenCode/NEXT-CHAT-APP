@@ -5,7 +5,7 @@ const usePostData = <TResponse = any>(url: string) => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<TResponse | null>(null);
 
-  console.log("errorerror", error);
+  // console.log("errorerror", error);
 
   const postData = async (body: any) => {
     setLoading(true);

@@ -4,7 +4,7 @@ import { User } from "../schemas/UserSchema";
 export async function registerUser(body: any) {
   console.log("body", body);
 
-  const { name, email, password } = body;
+  const { name, email, password, pic } = body;
   if (!name || !email || !password) {
     return Response.json({ error: "all fields are required" }, { status: 400 });
   }
@@ -21,6 +21,7 @@ export async function registerUser(body: any) {
       name,
       email,
       password,
+      image: pic,
     });
     if (user) {
       return Response.json(

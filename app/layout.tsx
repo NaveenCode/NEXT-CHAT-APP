@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "THE REAL CHAT",
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="en" className="">
       <body className="bg-[url(/BG.jpg)] bg-cover bg-[50%] bg-no-repeat min-h-screen w-screen overflow-x-hidden">
         {children}
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );

@@ -18,7 +18,7 @@ export const loginUser = async (body: any) => {
         { status: 404 }
       );
     }
-    console.log("user", user);
+    // console.log("user", user);
 
     const comparePassword = await bcrypt.compare(password, user.password);
     if (!comparePassword) {
